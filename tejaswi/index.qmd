@@ -1,0 +1,319 @@
+---
+title: "Time Series Analysis and Forecasting of Economic Indicators"
+author: Vasundhara Yerriboina & Tejaswi Gudimetla
+format: revealjs
+editor: source
+toc: true
+toc-depth: 1
+slide-number: true
+smaller: false
+scrollable: true 
+execute:
+  echo: true
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+  library(reprex)
+  library(forecast)
+  library(fredr)
+  library(tseries)  
+  library(ggplot2)  
+  library(vars)  # For VAR modeling
+  library(urca)  # For stationarity tests
+  library(tsibble)
+  library(fable)
+fredr_set_key("6e392cd67c169ea03727cdbe583bf8d6") 
+```
+
+# Introduction
+
+-   Overview:
+
+-- This analysis focuses on three pivotal economic indicators: Unemployment Rate, Real GDP (Gross Domestic Product), and Inflation Expectations. Each of these indicators plays a crucial role in understanding the health and direction of the economy.
+
+## Unemployment Rate
+
+Measures the percentage of the labor force that is jobless and actively seeking employment.
+
+```{r}
+unrate_data <- fredr(series_id = "UNRATE", observation_start = as.Date("2000-01-01"), observation_end = as.Date("2020-12-31"))
+print(unrate_data)
+```
+
+## Real GDP
+
+Represents the total economic output adjusted for inflation, serving as a comprehensive indicator of economic activity and growth.
+
+```{r}
+gdp_data <- fredr(series_id = "GDPC1", frequency = "q", observation_start = as.Date("2000-01-01"), observation_end = as.Date("2020-12-31"))
+print(gdp_data)
+```
+
+## Inflation Expectations:
+
+Reflect the market's forecast of inflation over a specific future period, influencing consumer and business behavior.
+
+```{r}
+inflation_data <- fredr(series_id = "T5YIE", observation_start = as.Date("2000-01-01"), observation_end = as.Date("2020-12-31"))
+print(inflation_data)
+```
+
+# Data Retrieval and Preliminary Analysis
+
+-- Data for each indicator was retrieved and formatted into time series for analysis, revealing distinct patterns and cycles correlating with historical economic events.
+
+```{r}
+# Convert to ts objects
+unrate_ts <- ts(unrate_data$value, start = c(2000, 1), frequency = 12)
+gdp_ts <- ts(gdp_data$value, start = c(2000, 1), frequency = 4) 
+  # Ensuring all series are of the same length for correlation analysis
+inflation_values_clean <- na.approx(inflation_data$value)
+inflation_ts <- ts(inflation_values_clean, start = c(2000, 1), frequency = 12)
+```
+
+# Empirical Data Analysis
+
+-- This phase involves exploring the time series data through visual analysis. The goal is to identify underlying patterns, trends, and seasonality within the data, setting a foundation for subsequent modeling.
+
+## Analysis
+
+```{r}
+unrate_ts <- ts(unrate_data$value, start = c(2000, 1), frequency = 12)
+plot(unrate_ts, main = "Unemployment Rate Over Time")
+
+```
+
+## Analysis
+
+```{r}
+
+gdp_ts <- ts(gdp_data$value, start = c(2000, 1), frequency = 4) 
+plot(gdp_ts, main = "Real GDP Over Time")
+```
+
+## Analysis
+
+```{r}
+inflation_values_clean <- na.approx(inflation_data$value)
+inflation_ts <- ts(inflation_values_clean, start = c(2000, 1), frequency = 12)
+plot(inflation_ts, main = "Inflation Rate Over Time")
+```
+-- Visualization & Interpretation: Each plot illustrates the respective economic indicator over time, highlighting any visible trends corresponding to historical economic events. 
+
+# Modeling
+
+-- Modeling involves applying statistical techniques to analyze time series data and forecast future values. The Augmented Dickey-Fuller test checks for stationarity, a prerequisite for many time series models. Seasonal decomposition (STL) and ARIMA modeling are employed for forecasting.
+
+## Stationarity
+
+-- We performed Augmented Dickey-Fuller (ADF) tests to check the stationarity of each series.
+
+```{r}
+# Stationarity Tests: Perform ADF test
+adf_unrate <- adf.test(unrate_ts, alternative ="stationary")
+adf_gdp <- adf.test(gdp_ts, alternative = "stationary")
+adf_inflation <-adf.test(inflation_ts,
+                         alternative="stationary")
+print(adf_unrate)
+print(adf_gdp)
+print(adf_inflation)
+
+```
+
+## Aligning data lengths and handling missing values:
+
+```{r}
+  
+common_length <- min(length(unrate_data$value), length(gdp_data$value), length(inflation_data$value))
+  
+# Removing any NA values that might be present after aligning lengths
+unrate_values_clean <- na.omit(unrate_data$value[1:common_length])
+gdp_values_clean <- na.omit(gdp_data$value[1:common_length])
+inflation_values_clean <- na.omit(inflation_data$value[1:common_length])
+  
+# Checking if lengths are still equal after NA omission, adjust common_length if not
+common_length <-min(length(unrate_values_clean),length(gdp_values_clean), length(inflation_values_clean))
+  
+# Converting cleaned vectors to ts objects
+unrate_ts <- ts(unrate_values_clean, start = c(2000, 
+                                            1),frequency=12)
+gdp_ts <- ts(gdp_values_clean, start =c(2000,1),frequency=4) 
+inflation_ts <- ts(inflation_values_clean,start=c(2000,1),
+                   frequency= 12)
+```
+
+## Correlation analysis:
+
+-- After aggregating the series to annual frequency and ensuring equal lengths, we calculated the correlation matrix between the three variables.
+
+```{r}
+# Correlation Analysis between the series
+  # Annual aggregates for correlation
+unrate_annual <- aggregate(unrate_ts, nfrequency = 1, mean)
+gdp_annual <- aggregate(gdp_ts, nfrequency = 1, mean)
+inflation_annual <- aggregate(inflation_ts, nfrequency = 
+                                1,mean)
+  
+  # Ensuring that all vectors are of the same length for correlation analysis
+common_length <- min(length(unrate_annual),
+                     length(gdp_annual), 
+                     length(inflation_annual))
+  
+  # Use the shortest length to cut all series to the same length
+unrate_annual <- unrate_annual[1:common_length]
+gdp_annual <- gdp_annual[1:common_length]
+inflation_annual <- inflation_annual[1:common_length]
+  
+  # Correlation Analysis: Analyze correlations between the series
+cor_matrix <- cor(cbind(unrate_annual, gdp_annual, inflation_annual))
+print(cor_matrix)
+```
+
+## Seasonality and trend decomposition using Loess
+
+```{r}
+  
+# Seasonality and Trend Decomposition for Unemployment Rate
+unrate_decomp <- stl(unrate_ts, s.window = "periodic")
+plot(unrate_decomp)
+# After STL decomposition of unrate_ts
+trend_component <- unrate_decomp$time.series[,2]
+seasonal_component <- unrate_decomp$time.series[,1]
+# Fit ARIMA model on the trend component
+trend_model <- auto.arima(trend_component)
+  
+# Forecast the trend component
+trend_forecast <- forecast(trend_model, h=12)
+seasonal_forecast <- seasonal_component[1:12] 
+# Assuming the next 12 months follow the same seasonal pattern
+final_forecast <- trend_forecast$mean + seasonal_forecast
+# Plot the final forecast incorporating both trend and seasonal forecasts
+plot(final_forecast, main="Forecast with Seasonal Adjustment", type="l", xlab="Month", ylab="Unemployment Rate")
+points(final_forecast, col="red", pch=19)
+  
+```
+
+## ARIMA model:
+
+-- We fit ARIMA models to the unemployment rate and GDP series using the 'auto.arima' function.
+
+```{r}
+# Fit ARIMA models
+unrate_model <- auto.arima(unrate_ts)
+gdp_model <- auto.arima(gdp_ts)
+```
+
+## Time series cross-validation:
+
+```{r}
+  
+time_series_cv <- function(ts_data, horizon, fit_function) {
+    errors <- numeric()
+    for (i in 1:(length(ts_data) - horizon))
+      {
+      train <- window(ts_data, end =
+                        c(2000+((i-1)/frequency(ts_data)), 
+                          (i-1) %% frequency(ts_data) + 1))
+      test <- window(ts_data, start = c(2000 + 
+                                    (i/frequency(ts_data)),i
+                                    %% frequency(ts_data) 
+                                    +1), end = c(2000 
+                                              +((i+horizon-                                                                                                 1)/frequency(ts_data)), 
+                                              (i + horizon -
+                                          
+                                                 
+                                      1)%%frequency(ts_data) 
+                                      + 1))
+      model <- fit_function(train)
+      forecasted <- forecast(model, h = horizon)
+      
+      # Assuming test and forecasted are of equal length
+      errors <- c(errors, mean(abs(forecasted$mean - test)))
+      }
+    mean(errors)
+}
+cv_error_unrate <- time_series_cv(unrate_ts, 12, auto.arima)
+cv_error_gdp <- time_series_cv(gdp_ts, 4, auto.arima)
+cat("CV Error for Unemployment Rate 
+    (MAE):",cv_error_unrate,"\n")
+cat("CV Error for GDP (MAE):", cv_error_gdp, "\n")
+  
+```
+
+## Simulation to demonstrate theory
+
+```{r}
+set.seed(123)
+simulated_data <- arima.sim(model=list(ar=0.5), n=100)
+simulated_model <- auto.arima(simulated_data)
+plot(forecast(simulated_model, h = 10), main = "Simulated Data Forecast")
+```
+
+## Model diagnostics
+
+-- We conducted Ljung-Box tests on the residuals of the ARIMA models to check for any remaining autocorrelation. we also compared the AIC and BIC values of the models and visually inspected the residual plots.
+
+```{r}
+Box.test(unrate_model$residuals,
+         lag=log(length(unrate_model$residuals)))
+Box.test(gdp_model$residuals,
+         lag=log(length(gdp_model$residuals)))
+  
+# Comparing AIC and BIC values for the two models
+cat("Unemployment Rate ARIMA Model AIC:", unrate_model$aic,     "BIC:", unrate_model$bic, "\n")
+cat("GDP ARIMA Model AIC:", gdp_model$aic, "BIC:", gdp_model$bic, "\n\n")
+  
+# Check residuals for the two models
+cat("Checking residuals for Unemployment Rate ARIMA             Model:\n")
+checkresiduals(unrate_model)
+cat("\nChecking residuals for GDP ARIMA Model:\n")
+checkresiduals(gdp_model)
+  
+# Visual comparison of model diagnostics using the autoplot function from the forecast package
+autoplot(unrate_model$residuals) + ggtitle("Unemployment                                               Rate ARIMA Model 
+                                           Residuals")
+autoplot(gdp_model$residuals) + ggtitle("GDP ARIMA        
+                                        ModelResiduals")
+  
+```
+
+## Mathematical background notation
+
+-- ARIMA Model:
+An ARIMA model is denoted as ARIMA(p, d, q), where p is the number of autoregressive terms, d is the degree of differencing, and q is the number of moving average terms.
+
+we can infer the specific type of ARIMA model used for analysis, such as ARIMA(0,2,1) from the residuals plot, which means no autoregressive terms, differencing of order 2, and one moving average term.
+
+-- STL Model:
+STL decomposes a time series Yt into three components: the seasonal component St, the trend component Tt, and the remainder component Rt such that  Yt= St+Tt+Rt
+
+
+
+## Forecasting
+
+```{r}
+unrate_forecast <- forecast(unrate_model, h = 12)
+gdp_forecast <- forecast(gdp_model, h = 4)
+
+# forecasts plottng
+plot(unrate_forecast, main = "Forecasted Unemployment Rate")
+
+plot(gdp_forecast, main = "Forecasted Real GDP")
+
+print(unrate_forecast)
+
+cat("Future Point Forecast Values for Unemployment Rate   
+    (Next 12 Months):\n", unrate_forecast$mean, "\n\n")
+
+print(gdp_forecast)
+
+cat("Future Point Forecast Values for Real GDP (Next 4   
+    Quarters):\n", gdp_forecast$mean, "\n")
+  
+```
+
+# Conclusion
+
+-- Overall, our analysis involves retrieving economic time series data, conducting exploratory analysis, checking stationarity, modeling with ARIMA, performing model diagnostics, and generating forecasts.

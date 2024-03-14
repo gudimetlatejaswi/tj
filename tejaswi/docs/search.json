@@ -1,0 +1,114 @@
+[
+  {
+    "objectID": "index.html#unemployment-rate",
+    "href": "index.html#unemployment-rate",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Unemployment Rate",
+    "text": "Unemployment Rate\nMeasures the percentage of the labor force that is jobless and actively seeking employment.\n\nunrate_data &lt;- fredr(series_id = \"UNRATE\", observation_start = as.Date(\"2000-01-01\"), observation_end = as.Date(\"2020-12-31\"))\nprint(unrate_data)\n\n# A tibble: 252 × 5\n   date       series_id value realtime_start realtime_end\n   &lt;date&gt;     &lt;chr&gt;     &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;      \n 1 2000-01-01 UNRATE      4   2024-03-14     2024-03-14  \n 2 2000-02-01 UNRATE      4.1 2024-03-14     2024-03-14  \n 3 2000-03-01 UNRATE      4   2024-03-14     2024-03-14  \n 4 2000-04-01 UNRATE      3.8 2024-03-14     2024-03-14  \n 5 2000-05-01 UNRATE      4   2024-03-14     2024-03-14  \n 6 2000-06-01 UNRATE      4   2024-03-14     2024-03-14  \n 7 2000-07-01 UNRATE      4   2024-03-14     2024-03-14  \n 8 2000-08-01 UNRATE      4.1 2024-03-14     2024-03-14  \n 9 2000-09-01 UNRATE      3.9 2024-03-14     2024-03-14  \n10 2000-10-01 UNRATE      3.9 2024-03-14     2024-03-14  \n# ℹ 242 more rows"
+  },
+  {
+    "objectID": "index.html#real-gdp",
+    "href": "index.html#real-gdp",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Real GDP",
+    "text": "Real GDP\nRepresents the total economic output adjusted for inflation, serving as a comprehensive indicator of economic activity and growth.\n\ngdp_data &lt;- fredr(series_id = \"GDPC1\", frequency = \"q\", observation_start = as.Date(\"2000-01-01\"), observation_end = as.Date(\"2020-12-31\"))\nprint(gdp_data)\n\n# A tibble: 84 × 5\n   date       series_id  value realtime_start realtime_end\n   &lt;date&gt;     &lt;chr&gt;      &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;      \n 1 2000-01-01 GDPC1     13878. 2024-03-14     2024-03-14  \n 2 2000-04-01 GDPC1     14131. 2024-03-14     2024-03-14  \n 3 2000-07-01 GDPC1     14145. 2024-03-14     2024-03-14  \n 4 2000-10-01 GDPC1     14230. 2024-03-14     2024-03-14  \n 5 2001-01-01 GDPC1     14183. 2024-03-14     2024-03-14  \n 6 2001-04-01 GDPC1     14272. 2024-03-14     2024-03-14  \n 7 2001-07-01 GDPC1     14215. 2024-03-14     2024-03-14  \n 8 2001-10-01 GDPC1     14254. 2024-03-14     2024-03-14  \n 9 2002-01-01 GDPC1     14373. 2024-03-14     2024-03-14  \n10 2002-04-01 GDPC1     14461. 2024-03-14     2024-03-14  \n# ℹ 74 more rows"
+  },
+  {
+    "objectID": "index.html#inflation-expectations",
+    "href": "index.html#inflation-expectations",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Inflation Expectations:",
+    "text": "Inflation Expectations:\nReflect the market’s forecast of inflation over a specific future period, influencing consumer and business behavior.\n\ninflation_data &lt;- fredr(series_id = \"T5YIE\", observation_start = as.Date(\"2000-01-01\"), observation_end = as.Date(\"2020-12-31\"))\nprint(inflation_data)\n\n# A tibble: 4,696 × 5\n   date       series_id value realtime_start realtime_end\n   &lt;date&gt;     &lt;chr&gt;     &lt;dbl&gt; &lt;date&gt;         &lt;date&gt;      \n 1 2003-01-02 T5YIE      1.3  2024-03-14     2024-03-14  \n 2 2003-01-03 T5YIE      1.28 2024-03-14     2024-03-14  \n 3 2003-01-06 T5YIE      1.31 2024-03-14     2024-03-14  \n 4 2003-01-07 T5YIE      1.28 2024-03-14     2024-03-14  \n 5 2003-01-08 T5YIE      1.33 2024-03-14     2024-03-14  \n 6 2003-01-09 T5YIE      1.41 2024-03-14     2024-03-14  \n 7 2003-01-10 T5YIE      1.4  2024-03-14     2024-03-14  \n 8 2003-01-13 T5YIE      1.4  2024-03-14     2024-03-14  \n 9 2003-01-14 T5YIE      1.38 2024-03-14     2024-03-14  \n10 2003-01-15 T5YIE      1.41 2024-03-14     2024-03-14  \n# ℹ 4,686 more rows"
+  },
+  {
+    "objectID": "index.html#analysis",
+    "href": "index.html#analysis",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Analysis",
+    "text": "Analysis\n\nunrate_ts &lt;- ts(unrate_data$value, start = c(2000, 1), frequency = 12)\nplot(unrate_ts, main = \"Unemployment Rate Over Time\")"
+  },
+  {
+    "objectID": "index.html#analysis-1",
+    "href": "index.html#analysis-1",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Analysis",
+    "text": "Analysis\n\ngdp_ts &lt;- ts(gdp_data$value, start = c(2000, 1), frequency = 4) \nplot(gdp_ts, main = \"Real GDP Over Time\")"
+  },
+  {
+    "objectID": "index.html#analysis-2",
+    "href": "index.html#analysis-2",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Analysis",
+    "text": "Analysis\n\ninflation_values_clean &lt;- na.approx(inflation_data$value)\ninflation_ts &lt;- ts(inflation_values_clean, start = c(2000, 1), frequency = 12)\nplot(inflation_ts, main = \"Inflation Rate Over Time\")\n\n\n– Visualization & Interpretation: Each plot illustrates the respective economic indicator over time, highlighting any visible trends corresponding to historical economic events."
+  },
+  {
+    "objectID": "index.html#stationarity",
+    "href": "index.html#stationarity",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Stationarity",
+    "text": "Stationarity\n– We performed Augmented Dickey-Fuller (ADF) tests to check the stationarity of each series.\n\n# Stationarity Tests: Perform ADF test\nadf_unrate &lt;- adf.test(unrate_ts, alternative =\"stationary\")\nadf_gdp &lt;- adf.test(gdp_ts, alternative = \"stationary\")\nadf_inflation &lt;-adf.test(inflation_ts,\n                         alternative=\"stationary\")\nprint(adf_unrate)\n\n\n    Augmented Dickey-Fuller Test\n\ndata:  unrate_ts\nDickey-Fuller = -2.1217, Lag order = 6, p-value = 0.5246\nalternative hypothesis: stationary\n\nprint(adf_gdp)\n\n\n    Augmented Dickey-Fuller Test\n\ndata:  gdp_ts\nDickey-Fuller = -2.0955, Lag order = 4, p-value = 0.5367\nalternative hypothesis: stationary\n\nprint(adf_inflation)\n\n\n    Augmented Dickey-Fuller Test\n\ndata:  inflation_ts\nDickey-Fuller = -3.87, Lag order = 16, p-value = 0.01546\nalternative hypothesis: stationary"
+  },
+  {
+    "objectID": "index.html#aligning-data-lengths-and-handling-missing-values",
+    "href": "index.html#aligning-data-lengths-and-handling-missing-values",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Aligning data lengths and handling missing values:",
+    "text": "Aligning data lengths and handling missing values:\n\ncommon_length &lt;- min(length(unrate_data$value), length(gdp_data$value), length(inflation_data$value))\n  \n# Removing any NA values that might be present after aligning lengths\nunrate_values_clean &lt;- na.omit(unrate_data$value[1:common_length])\ngdp_values_clean &lt;- na.omit(gdp_data$value[1:common_length])\ninflation_values_clean &lt;- na.omit(inflation_data$value[1:common_length])\n  \n# Checking if lengths are still equal after NA omission, adjust common_length if not\ncommon_length &lt;-min(length(unrate_values_clean),length(gdp_values_clean), length(inflation_values_clean))\n  \n# Converting cleaned vectors to ts objects\nunrate_ts &lt;- ts(unrate_values_clean, start = c(2000, \n                                            1),frequency=12)\ngdp_ts &lt;- ts(gdp_values_clean, start =c(2000,1),frequency=4) \ninflation_ts &lt;- ts(inflation_values_clean,start=c(2000,1),\n                   frequency= 12)"
+  },
+  {
+    "objectID": "index.html#correlation-analysis",
+    "href": "index.html#correlation-analysis",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Correlation analysis:",
+    "text": "Correlation analysis:\n– After aggregating the series to annual frequency and ensuring equal lengths, we calculated the correlation matrix between the three variables.\n\n# Correlation Analysis between the series\n  # Annual aggregates for correlation\nunrate_annual &lt;- aggregate(unrate_ts, nfrequency = 1, mean)\ngdp_annual &lt;- aggregate(gdp_ts, nfrequency = 1, mean)\ninflation_annual &lt;- aggregate(inflation_ts, nfrequency = \n                                1,mean)\n  \n  # Ensuring that all vectors are of the same length for correlation analysis\ncommon_length &lt;- min(length(unrate_annual),\n                     length(gdp_annual), \n                     length(inflation_annual))\n  \n  # Use the shortest length to cut all series to the same length\nunrate_annual &lt;- unrate_annual[1:common_length]\ngdp_annual &lt;- gdp_annual[1:common_length]\ninflation_annual &lt;- inflation_annual[1:common_length]\n  \n  # Correlation Analysis: Analyze correlations between the series\ncor_matrix &lt;- cor(cbind(unrate_annual, gdp_annual, inflation_annual))\nprint(cor_matrix)\n\n                 unrate_annual gdp_annual inflation_annual\nunrate_annual        1.0000000  0.3900953        0.9621278\ngdp_annual           0.3900953  1.0000000        0.6053617\ninflation_annual     0.9621278  0.6053617        1.0000000"
+  },
+  {
+    "objectID": "index.html#seasonality-and-trend-decomposition-using-loess",
+    "href": "index.html#seasonality-and-trend-decomposition-using-loess",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Seasonality and trend decomposition using Loess",
+    "text": "Seasonality and trend decomposition using Loess\n\n# Seasonality and Trend Decomposition for Unemployment Rate\nunrate_decomp &lt;- stl(unrate_ts, s.window = \"periodic\")\nplot(unrate_decomp)\n\n\n\n\n\n\n\n# After STL decomposition of unrate_ts\ntrend_component &lt;- unrate_decomp$time.series[,2]\nseasonal_component &lt;- unrate_decomp$time.series[,1]\n# Fit ARIMA model on the trend component\ntrend_model &lt;- auto.arima(trend_component)\n  \n# Forecast the trend component\ntrend_forecast &lt;- forecast(trend_model, h=12)\nseasonal_forecast &lt;- seasonal_component[1:12] \n# Assuming the next 12 months follow the same seasonal pattern\nfinal_forecast &lt;- trend_forecast$mean + seasonal_forecast\n# Plot the final forecast incorporating both trend and seasonal forecasts\nplot(final_forecast, main=\"Forecast with Seasonal Adjustment\", type=\"l\", xlab=\"Month\", ylab=\"Unemployment Rate\")\npoints(final_forecast, col=\"red\", pch=19)"
+  },
+  {
+    "objectID": "index.html#arima-model",
+    "href": "index.html#arima-model",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "ARIMA model:",
+    "text": "ARIMA model:\n– We fit ARIMA models to the unemployment rate and GDP series using the ‘auto.arima’ function.\n\n# Fit ARIMA models\nunrate_model &lt;- auto.arima(unrate_ts)\ngdp_model &lt;- auto.arima(gdp_ts)"
+  },
+  {
+    "objectID": "index.html#time-series-cross-validation",
+    "href": "index.html#time-series-cross-validation",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Time series cross-validation:",
+    "text": "Time series cross-validation:\n\ntime_series_cv &lt;- function(ts_data, horizon, fit_function) {\n    errors &lt;- numeric()\n    for (i in 1:(length(ts_data) - horizon))\n      {\n      train &lt;- window(ts_data, end =\n                        c(2000+((i-1)/frequency(ts_data)), \n                          (i-1) %% frequency(ts_data) + 1))\n      test &lt;- window(ts_data, start = c(2000 + \n                                    (i/frequency(ts_data)),i\n                                    %% frequency(ts_data) \n                                    +1), end = c(2000 \n                                              +((i+horizon-                                                                                                 1)/frequency(ts_data)), \n                                              (i + horizon -\n                                          \n                                                 \n                                      1)%%frequency(ts_data) \n                                      + 1))\n      model &lt;- fit_function(train)\n      forecasted &lt;- forecast(model, h = horizon)\n      \n      # Assuming test and forecasted are of equal length\n      errors &lt;- c(errors, mean(abs(forecasted$mean - test)))\n      }\n    mean(errors)\n}\ncv_error_unrate &lt;- time_series_cv(unrate_ts, 12, auto.arima)\ncv_error_gdp &lt;- time_series_cv(gdp_ts, 4, auto.arima)\ncat(\"CV Error for Unemployment Rate \n    (MAE):\",cv_error_unrate,\"\\n\")\n\nCV Error for Unemployment Rate \n    (MAE): 0.4507484 \n\ncat(\"CV Error for GDP (MAE):\", cv_error_gdp, \"\\n\")\n\nCV Error for GDP (MAE): 194.4974"
+  },
+  {
+    "objectID": "index.html#simulation-to-demonstrate-theory",
+    "href": "index.html#simulation-to-demonstrate-theory",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Simulation to demonstrate theory",
+    "text": "Simulation to demonstrate theory\n\nset.seed(123)\nsimulated_data &lt;- arima.sim(model=list(ar=0.5), n=100)\nsimulated_model &lt;- auto.arima(simulated_data)\nplot(forecast(simulated_model, h = 10), main = \"Simulated Data Forecast\")"
+  },
+  {
+    "objectID": "index.html#model-diagnostics",
+    "href": "index.html#model-diagnostics",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Model diagnostics",
+    "text": "Model diagnostics\n– We conducted Ljung-Box tests on the residuals of the ARIMA models to check for any remaining autocorrelation. we also compared the AIC and BIC values of the models and visually inspected the residual plots.\n\nBox.test(unrate_model$residuals,\n         lag=log(length(unrate_model$residuals)))\n\n\n    Box-Pierce test\n\ndata:  unrate_model$residuals\nX-squared = 2.3439, df = 4.4308, p-value = 0.7329\n\nBox.test(gdp_model$residuals,\n         lag=log(length(gdp_model$residuals)))\n\n\n    Box-Pierce test\n\ndata:  gdp_model$residuals\nX-squared = 2.1286, df = 4.4308, p-value = 0.7691\n\n# Comparing AIC and BIC values for the two models\ncat(\"Unemployment Rate ARIMA Model AIC:\", unrate_model$aic,     \"BIC:\", unrate_model$bic, \"\\n\")\n\nUnemployment Rate ARIMA Model AIC: -115.1349 BIC: -105.508 \n\ncat(\"GDP ARIMA Model AIC:\", gdp_model$aic, \"BIC:\", gdp_model$bic, \"\\n\\n\")\n\nGDP ARIMA Model AIC: 1159.69 BIC: 1166.947 \n\n# Check residuals for the two models\ncat(\"Checking residuals for Unemployment Rate ARIMA             Model:\\n\")\n\nChecking residuals for Unemployment Rate ARIMA             Model:\n\ncheckresiduals(unrate_model)\n\n\n\n\n\n\n\n\n\n    Ljung-Box test\n\ndata:  Residuals from ARIMA(0,2,1)(0,0,2)[12]\nQ* = 9.0693, df = 14, p-value = 0.8266\n\nModel df: 3.   Total lags used: 17\n\ncat(\"\\nChecking residuals for GDP ARIMA Model:\\n\")\n\n\nChecking residuals for GDP ARIMA Model:\n\ncheckresiduals(gdp_model)\n\n\n\n\n\n\n\n\n\n    Ljung-Box test\n\ndata:  Residuals from ARIMA(0,1,1) with drift\nQ* = 2.519, df = 7, p-value = 0.9257\n\nModel df: 1.   Total lags used: 8\n\n# Visual comparison of model diagnostics using the autoplot function from the forecast package\nautoplot(unrate_model$residuals) + ggtitle(\"Unemployment                                               Rate ARIMA Model \n                                           Residuals\")\n\n\n\n\n\n\n\nautoplot(gdp_model$residuals) + ggtitle(\"GDP ARIMA        \n                                        ModelResiduals\")"
+  },
+  {
+    "objectID": "index.html#mathematical-background-notation",
+    "href": "index.html#mathematical-background-notation",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Mathematical background notation",
+    "text": "Mathematical background notation\n– ARIMA Model: An ARIMA model is denoted as ARIMA(p, d, q), where p is the number of autoregressive terms, d is the degree of differencing, and q is the number of moving average terms.\nwe can infer the specific type of ARIMA model used for analysis, such as ARIMA(0,2,1) from the residuals plot, which means no autoregressive terms, differencing of order 2, and one moving average term.\n– STL Model: STL decomposes a time series Yt into three components: the seasonal component St, the trend component Tt, and the remainder component Rt such that Yt= St+Tt+Rt"
+  },
+  {
+    "objectID": "index.html#forecasting",
+    "href": "index.html#forecasting",
+    "title": "Time Series Analysis and Forecasting of Economic Indicators",
+    "section": "Forecasting",
+    "text": "Forecasting\n\nunrate_forecast &lt;- forecast(unrate_model, h = 12)\ngdp_forecast &lt;- forecast(gdp_model, h = 4)\n\n# forecasts plottng\nplot(unrate_forecast, main = \"Forecasted Unemployment Rate\")\n\n\n\n\n\n\n\nplot(gdp_forecast, main = \"Forecasted Real GDP\")\n\n\n\n\n\n\n\nprint(unrate_forecast)\n\n         Point Forecast    Lo 80    Hi 80    Lo 95    Hi 95\nJan 2007       4.461419 4.319881 4.602958 4.244955 4.677884\nFeb 2007       4.342672 4.129208 4.556136 4.016207 4.669137\nMar 2007       4.386287 4.108243 4.664331 3.961055 4.811519\nApr 2007       4.331767 3.991291 4.672242 3.811055 4.852479\nMay 2007       4.346964 3.944376 4.749553 3.731259 4.962670\nJun 2007       4.287715 3.822489 4.752941 3.576213 4.999217\nJul 2007       4.264336 3.735504 4.793168 3.455557 5.073115\nAug 2007       4.290987 3.697332 4.884643 3.383070 5.198905\nSep 2007       4.232626 3.572785 4.892467 3.223486 5.241766\nOct 2007       4.189062 3.461586 4.916538 3.076484 5.301641\nNov 2007       4.160468 3.363860 4.957076 2.942162 5.378774\nDec 2007       4.183391 3.316129 5.050653 2.857028 5.509753\n\ncat(\"Future Point Forecast Values for Unemployment Rate   \n    (Next 12 Months):\\n\", unrate_forecast$mean, \"\\n\\n\")\n\nFuture Point Forecast Values for Unemployment Rate   \n    (Next 12 Months):\n 4.461419 4.342672 4.386287 4.331767 4.346964 4.287715 4.264336 4.290987 4.232626 4.189062 4.160468 4.183391 \n\nprint(gdp_forecast)\n\n        Point Forecast    Lo 80    Hi 80    Lo 95    Hi 95\n2021 Q1       20657.46 20330.31 20984.61 20157.13 21157.79\n2021 Q2       20737.54 20350.56 21124.53 20145.70 21329.39\n2021 Q3       20817.63 20378.89 21256.37 20146.63 21488.62\n2021 Q4       20897.71 20412.71 21382.71 20155.97 21639.46\n\ncat(\"Future Point Forecast Values for Real GDP (Next 4   \n    Quarters):\\n\", gdp_forecast$mean, \"\\n\")\n\nFuture Point Forecast Values for Real GDP (Next 4   \n    Quarters):\n 20657.46 20737.54 20817.63 20897.71"
+  }
+]
